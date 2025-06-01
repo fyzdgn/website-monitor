@@ -8,7 +8,11 @@ import com.websitemonitor.comparison.ComparisonStrategy;
 import com.websitemonitor.comparison.SimpleComparisonStrategy;
 
 import java.util.Optional;
-
+/**
+ * Service class responsible for managing website subscriptions.
+ * When creating a subscription, it accepts a ComparisonStrategy instance,
+ * allowing each subscription to define its own way of detecting content changes.
+ */
 public class WebsiteSubscriptionService {
     private final WebsiteSubscriptionRepository subscriptionRepository;
     private final ComparisonStrategy defaultStrategy = new SimpleComparisonStrategy();
