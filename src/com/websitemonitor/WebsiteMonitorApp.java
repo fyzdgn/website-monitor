@@ -10,6 +10,11 @@ import com.websitemonitor.scheduler.WebsiteMonitorScheduler;
 import com.websitemonitor.service.UserService;
 import com.websitemonitor.service.WebsiteSubscriptionService;
 
+/**
+ * Interface defining the strategy for comparing website content.
+ * The method 'hasChanged' checks if the website content has been updated.
+ * This allows different comparison algorithms to be implemented and swapped easily.
+ */
 public class WebsiteMonitorApp {
     public static void main(String[] args) {
         // Initialize repositories

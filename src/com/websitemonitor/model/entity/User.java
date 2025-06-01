@@ -1,11 +1,16 @@
 package com.websitemonitor.model.entity;
 
 import com.websitemonitor.model.enums.NotificationChannel;
+import com.websitemonitor.notification.NotificationObserver;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class User {
+/**
+ * Represents a user in the system who subscribes to website updates.
+ * Implements NotificationObserver to receive update notifications.
+ */
+public class User implements NotificationObserver {
     private String userId;
     private String username;
     private String email;
@@ -16,6 +21,13 @@ public class User {
         this.username = username;
         this.email = email;
         this.subscriptions = new ArrayList<>();
+    }
+
+    // Observer Pattern: Called when a subscribed website is updated
+    @Override
+    public void update(WebsiteSubscription subscription, String message) {
+        System.out.println("User '" + username + "' received update for " +
+                subscription.getUrl() + ": " + message);
     }
 
     // Getters and setters

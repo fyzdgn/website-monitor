@@ -1,5 +1,6 @@
 package com.websitemonitor.scheduler;
 
+import com.websitemonitor.model.entity.User;
 import com.websitemonitor.model.entity.WebsiteSubscription;
 import com.websitemonitor.notification.EmailNotificationSender;
 import com.websitemonitor.notification.WebsiteUpdateNotifier;
@@ -15,13 +16,13 @@ public class WebsiteMonitorScheduler {
     private final WebsiteSubscriptionRepository subscriptionRepository;
     private final ScheduledExecutorService scheduler;
     private final WebsiteChecker websiteChecker;
+    private final WebsiteUpdateNotifier notifier;
 
     public WebsiteMonitorScheduler(WebsiteSubscriptionRepository subscriptionRepository) {
         this.subscriptionRepository = subscriptionRepository;
         this.scheduler = Executors.newScheduledThreadPool(1);
 
-        // Observer pattern için notifier oluşturuluyor ve observer ekleniyor
-        WebsiteUpdateNotifier notifier = new WebsiteUpdateNotifier();
+        this.notifier = new WebsiteUpdateNotifier();
         notifier.addObserver(new EmailNotificationSender());
 
         this.websiteChecker = new WebsiteChecker(notifier);
@@ -37,7 +38,6 @@ public class WebsiteMonitorScheduler {
 
     private void checkAllSubscriptions() {
         List<WebsiteSubscription> subscriptions = subscriptionRepository.findAll();
-
         LocalDateTime now = LocalDateTime.now();
 
         System.out.println("Starting subscription checks at: " + now);
@@ -46,10 +46,17 @@ public class WebsiteMonitorScheduler {
             System.out.println("Checking subscription: " + subscription.getSubscriptionId() + " URL: " + subscription.getWebsiteUrl());
 
             if (shouldCheckNow(subscription, now)) {
+
+                User user = subscription.getUser();
+                if (user != null) {
+                    notifier.addObserver(user); // user implements NotificationObserver
+                }
+
                 boolean updated = websiteChecker.checkForUpdates(subscription);
 
                 if (updated) {
                     System.out.println("Website update detected for: " + subscription.getWebsiteUrl());
+
                 } else {
                     System.out.println("No update detected for: " + subscription.getWebsiteUrl());
                 }
@@ -61,7 +68,6 @@ public class WebsiteMonitorScheduler {
             }
         });
     }
-
 
     private boolean shouldCheckNow(WebsiteSubscription subscription, LocalDateTime now) {
         LocalDateTime lastChecked = subscription.getLastChecked();

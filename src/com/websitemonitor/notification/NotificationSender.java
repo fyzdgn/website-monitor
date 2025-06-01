@@ -6,3 +6,5 @@ import com.websitemonitor.model.enums.NotificationChannel;
 public interface NotificationSender {
     void update (User user, String message);
 }
+
+//subject
