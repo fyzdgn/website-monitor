@@ -1,12 +1,11 @@
 package com.websitemonitor.notification;
 
-import com.websitemonitor.model.entity.User;
+import com.websitemonitor.model.entity.WebsiteSubscription;
 
-public class EmailNotificationSender implements NotificationSender {
+public class EmailNotificationSender implements NotificationObserver {
     @Override
-    public void sendNotification(User user, String message) {
-        System.out.println("Sending email to: " + user.getEmail());
+    public void update(WebsiteSubscription subscription, String message) {
+        System.out.println("Sending email to: " + subscription.getUser().getEmail());
         System.out.println("Message: " + message);
-        // Actual email sending implementation would go here
     }
 }

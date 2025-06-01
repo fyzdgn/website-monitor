@@ -1,9 +1,8 @@
 package com.websitemonitor.scheduler;
 
 import com.websitemonitor.model.entity.WebsiteSubscription;
-import com.websitemonitor.model.enums.NotificationChannel;
-import com.websitemonitor.notification.NotificationFactory;
-import com.websitemonitor.notification.NotificationSender;
+import com.websitemonitor.notification.EmailNotificationSender;
+import com.websitemonitor.notification.WebsiteUpdateNotifier;
 import com.websitemonitor.repository.WebsiteSubscriptionRepository;
 
 import java.time.LocalDateTime;
@@ -20,31 +19,47 @@ public class WebsiteMonitorScheduler {
     public WebsiteMonitorScheduler(WebsiteSubscriptionRepository subscriptionRepository) {
         this.subscriptionRepository = subscriptionRepository;
         this.scheduler = Executors.newScheduledThreadPool(1);
-        this.websiteChecker = new WebsiteChecker();
+
+        // Observer pattern için notifier oluşturuluyor ve observer ekleniyor
+        WebsiteUpdateNotifier notifier = new WebsiteUpdateNotifier();
+        notifier.addObserver(new EmailNotificationSender());
+
+        this.websiteChecker = new WebsiteChecker(notifier);
     }
 
     public void startMonitoring() {
         scheduler.scheduleAtFixedRate(this::checkAllSubscriptions, 0, 1, TimeUnit.HOURS);
     }
 
-    public void checkAllSubscriptions() {
+    public void checkAllSubscriptionsImmediately() {
+        this.checkAllSubscriptions();
+    }
+
+    private void checkAllSubscriptions() {
         List<WebsiteSubscription> subscriptions = subscriptionRepository.findAll();
 
+        LocalDateTime now = LocalDateTime.now();
+
         subscriptions.forEach(subscription -> {
-            if (shouldCheckNow(subscription)) {
-                boolean hasUpdate = websiteChecker.checkForUpdates(subscription);
-                if (hasUpdate) {
-                    notifyUser(subscription);
+            if (shouldCheckNow(subscription, now)) {
+                boolean updated = websiteChecker.checkForUpdates(subscription);
+
+                if (updated) {
+                    System.out.println("Website updated detected for: " + subscription.getWebsiteUrl());
                 }
-                subscription.setLastChecked(LocalDateTime.now());
+
+                subscription.setLastChecked(now);
                 subscriptionRepository.save(subscription);
             }
         });
     }
 
-    private boolean shouldCheckNow(WebsiteSubscription subscription) {
-        LocalDateTime now = LocalDateTime.now();
+    private boolean shouldCheckNow(WebsiteSubscription subscription, LocalDateTime now) {
         LocalDateTime lastChecked = subscription.getLastChecked();
+
+        if (lastChecked == null) {
+            return true; // Henüz hiç kontrol edilmemişse kontrol et
+        }
 
         switch (subscription.getFrequency()) {
             case HOURLY:
@@ -58,12 +73,6 @@ public class WebsiteMonitorScheduler {
             default:
                 return false;
         }
-    }
-
-    private void notifyUser(WebsiteSubscription subscription) {
-        String message = "The website " + subscription.getWebsiteUrl() + " has been updated!";
-        NotificationSender sender = NotificationFactory.getSender(NotificationChannel.EMAIL);
-        sender.sendNotification(subscription.getUser(), message);
     }
 
     public void shutdown() {

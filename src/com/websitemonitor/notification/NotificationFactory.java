@@ -3,7 +3,7 @@ package com.websitemonitor.notification;
 import com.websitemonitor.model.enums.NotificationChannel;
 
 public class NotificationFactory {
-    public static NotificationSender getSender(NotificationChannel channel) {
+    public static EmailNotificationSender getSender(NotificationChannel channel) {
         switch (channel) {
             case EMAIL:
                 return new EmailNotificationSender();

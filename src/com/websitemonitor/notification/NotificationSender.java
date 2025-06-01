@@ -4,5 +4,5 @@ import com.websitemonitor.model.entity.User;
 import com.websitemonitor.model.enums.NotificationChannel;
 
 public interface NotificationSender {
-    void sendNotification(User user, String message);
+    void update (User user, String message);
 }
