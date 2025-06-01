@@ -3,6 +3,7 @@ package com.websitemonitor.controller;
 import com.websitemonitor.model.entity.User;
 import com.websitemonitor.model.entity.WebsiteSubscription;
 import com.websitemonitor.service.WebsiteSubscriptionService;
+import com.websitemonitor.comparison.ComparisonStrategy;
 
 public class SubscriptionController {
     private final WebsiteSubscriptionService subscriptionService;
@@ -11,9 +12,10 @@ public class SubscriptionController {
         this.subscriptionService = subscriptionService;
     }
 
-    public WebsiteSubscription createSubscription(User user, String websiteUrl, String frequency) {
-        return subscriptionService.createSubscription(websiteUrl, user, frequency);
+    public WebsiteSubscription createSubscription(User user, String url, String frequency) {
+        return subscriptionService.createSubscription(user, url, frequency);
     }
+
 
     public void updateSubscriptionFrequency(String subscriptionId, String newFrequency) {
         subscriptionService.updateSubscriptionFrequency(subscriptionId, newFrequency);

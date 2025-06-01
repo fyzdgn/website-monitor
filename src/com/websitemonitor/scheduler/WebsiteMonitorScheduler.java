@@ -28,7 +28,7 @@ public class WebsiteMonitorScheduler {
     }
 
     public void startMonitoring() {
-        scheduler.scheduleAtFixedRate(this::checkAllSubscriptions, 0, 1, TimeUnit.HOURS);
+        scheduler.scheduleAtFixedRate(this::checkAllSubscriptions, 0, 5, TimeUnit.SECONDS);
     }
 
     public void checkAllSubscriptionsImmediately() {
@@ -40,25 +40,34 @@ public class WebsiteMonitorScheduler {
 
         LocalDateTime now = LocalDateTime.now();
 
+        System.out.println("Starting subscription checks at: " + now);
+
         subscriptions.forEach(subscription -> {
+            System.out.println("Checking subscription: " + subscription.getSubscriptionId() + " URL: " + subscription.getWebsiteUrl());
+
             if (shouldCheckNow(subscription, now)) {
                 boolean updated = websiteChecker.checkForUpdates(subscription);
 
                 if (updated) {
-                    System.out.println("Website updated detected for: " + subscription.getWebsiteUrl());
+                    System.out.println("Website update detected for: " + subscription.getWebsiteUrl());
+                } else {
+                    System.out.println("No update detected for: " + subscription.getWebsiteUrl());
                 }
 
                 subscription.setLastChecked(now);
                 subscriptionRepository.save(subscription);
+            } else {
+                System.out.println("Not time to check subscription: " + subscription.getSubscriptionId());
             }
         });
     }
+
 
     private boolean shouldCheckNow(WebsiteSubscription subscription, LocalDateTime now) {
         LocalDateTime lastChecked = subscription.getLastChecked();
 
         if (lastChecked == null) {
-            return true; // Henüz hiç kontrol edilmemişse kontrol et
+            return true;
         }
 
         switch (subscription.getFrequency()) {

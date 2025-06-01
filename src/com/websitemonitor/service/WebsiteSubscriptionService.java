@@ -4,23 +4,34 @@ import com.websitemonitor.model.entity.User;
 import com.websitemonitor.model.entity.WebsiteSubscription;
 import com.websitemonitor.model.enums.NotificationFrequency;
 import com.websitemonitor.repository.WebsiteSubscriptionRepository;
+import com.websitemonitor.comparison.ComparisonStrategy;
+import com.websitemonitor.comparison.SimpleComparisonStrategy;
 
 import java.util.Optional;
 
 public class WebsiteSubscriptionService {
     private final WebsiteSubscriptionRepository subscriptionRepository;
+    private final ComparisonStrategy defaultStrategy = new SimpleComparisonStrategy();
 
     public WebsiteSubscriptionService(WebsiteSubscriptionRepository subscriptionRepository) {
         this.subscriptionRepository = subscriptionRepository;
     }
 
-    public WebsiteSubscription createSubscription(String websiteUrl, User user,
-                                                  String frequency) {
+
+    public WebsiteSubscription createSubscription(User user, String url, String frequency) {
+        return createSubscription(user, url, frequency, defaultStrategy);
+    }
+
+
+    public WebsiteSubscription createSubscription(User user, String url, String frequency, ComparisonStrategy strategy) {
         WebsiteSubscription subscription = new WebsiteSubscription(
-                generateSubscriptionId(), websiteUrl,
-                NotificationFrequency.valueOf(frequency.toUpperCase()), user);
+                generateSubscriptionId(),
+                url,
+                NotificationFrequency.valueOf(frequency.toUpperCase()),
+                user,
+                strategy
+        );
         subscriptionRepository.save(subscription);
-        user.addSubscription(subscription);
         return subscription;
     }
 
