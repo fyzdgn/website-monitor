@@ -27,7 +27,7 @@ public class User implements NotificationObserver {
     @Override
     public void update(WebsiteSubscription subscription, String message) {
         System.out.println("User '" + username + "' received update for " +
-                subscription.getUrl() + ": " + message);
+                subscription.getWebsiteUrl() + ": " + message);
     }
 
     // Getters and setters
