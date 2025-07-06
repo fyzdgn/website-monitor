@@ -20,6 +20,7 @@ public class ContentSizeStrategy implements ComparisonStrategy {
         }
 
         return false;
+
     }
 
     @Override

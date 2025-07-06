@@ -20,6 +20,7 @@ public class TextContentStrategy implements ComparisonStrategy {
             return true;
         }
 
+
         return false;
     }
 

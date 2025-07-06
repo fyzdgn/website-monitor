@@ -23,6 +23,7 @@ public class HtmlContentStrategy implements ComparisonStrategy {
         }
 
         return false;
+
     }
 
     @Override

@@ -15,5 +15,6 @@ public class SimpleComparisonStrategy implements ComparisonStrategy {
         if (content1 == null || content2 == null) return false;
         return content1.equals(content2);
     }
+
 }
 

@@ -45,4 +45,5 @@ public class WebsiteMonitorApp {
         Runtime.getRuntime().addShutdownHook(new Thread(scheduler::shutdown));
 
     }
+
 }

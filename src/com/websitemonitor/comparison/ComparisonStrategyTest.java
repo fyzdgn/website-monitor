@@ -24,7 +24,6 @@ public class ComparisonStrategyTest {
         System.out.println("Whitespace: " + textStrategy.isEqual("<p> </p>", "<div></div>"));                         // true
         System.out.println("Null input: " + textStrategy.isEqual(null, "<p>Hi</p>"));                                 // false
 
-
         System.out.println("\n==== SimpleComparisonStrategy ====");
         SimpleComparisonStrategy simpleStrategy = new SimpleComparisonStrategy();
         System.out.println("Exact same content: " + simpleStrategy.isEqual("hello", "hello"));       // true
