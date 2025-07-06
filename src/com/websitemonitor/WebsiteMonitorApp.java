@@ -35,9 +35,9 @@ public class WebsiteMonitorApp {
 
 
         // Example usage
-        User user = userController.registerUser("john_doe", "john@example.com");
+        User user = userController.registerUser("feyza", "feyza@gmail.com");
         WebsiteSubscription subscription = subscriptionController.createSubscription(
-                user, "https://example.com", "daily");
+                user, "https://google.com", "daily");
 
         System.out.println("User registered and subscription created!");
 

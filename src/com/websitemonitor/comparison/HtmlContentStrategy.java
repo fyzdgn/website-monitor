@@ -5,12 +5,6 @@ import com.websitemonitor.model.entity.WebsiteSubscription;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-/**
- A strategy that compares the HTML content of the website.
- It can use a library like Jsoup to parse HTML and normalize it before comparison,
- ignoring insignificant differences like whitespace or formatting.
- Returns true if the HTML content has changed significantly.
- */
 public class HtmlContentStrategy implements ComparisonStrategy {
 
     @Override
@@ -31,6 +25,12 @@ public class HtmlContentStrategy implements ComparisonStrategy {
         return false;
     }
 
+    @Override
+    public boolean isEqual(String content1, String content2) {
+        if (content1 == null || content2 == null) return false;
+        return content1.equals(content2); // HTML tag + attribute vs attribute dâhil tam eşitlik
+    }
+
     private String hash(String content) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -47,4 +47,3 @@ public class HtmlContentStrategy implements ComparisonStrategy {
         }
     }
 }
-

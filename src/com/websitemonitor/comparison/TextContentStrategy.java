@@ -3,11 +3,7 @@ package com.websitemonitor.comparison;
 import com.websitemonitor.model.entity.WebsiteSubscription;
 
 public class TextContentStrategy implements ComparisonStrategy {
-    /**
-     A strategy that compares the plain text extracted from the website content.
-     It ignores HTML tags and compares only visible text.
-     Returns true if the plain text content has changed.
-     */
+
     @Override
     public boolean hasChanged(WebsiteSubscription subscription, String newContent) {
         String textOnly = newContent.replaceAll("<[^>]*>", "").replaceAll("\\s+", " ").trim();
@@ -26,5 +22,14 @@ public class TextContentStrategy implements ComparisonStrategy {
 
         return false;
     }
-}
 
+    @Override
+    public boolean isEqual(String content1, String content2) {
+        if (content1 == null || content2 == null) return false;
+
+        String text1 = content1.replaceAll("<[^>]*>", "").replaceAll("\\s+", " ").trim();
+        String text2 = content2.replaceAll("<[^>]*>", "").replaceAll("\\s+", " ").trim();
+
+        return text1.equals(text2);
+    }
+}
