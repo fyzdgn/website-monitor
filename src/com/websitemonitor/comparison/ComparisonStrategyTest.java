@@ -1,34 +1,70 @@
 package com.websitemonitor.comparison;
 
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ComparisonStrategyTest {
-    public static void main(String[] args) {
 
-        System.out.println("==== ContentSizeStrategy ====");
-        ContentSizeStrategy sizeStrategy = new ContentSizeStrategy();
-        System.out.println("Same size: " + sizeStrategy.isEqual("abc", "xyz"));         // true
-        System.out.println("Different size: " + sizeStrategy.isEqual("abc", "xy"));     // false
-        System.out.println("Empty strings: " + sizeStrategy.isEqual("", ""));           // true
-        System.out.println("Null input: " + sizeStrategy.isEqual(null, "abc"));         // false
+    @Test
+    void testContentSize_equalLength() {
+        ComparisonStrategy strategy = new ContentSizeStrategy();
+        assertTrue(strategy.isEqual("abc", "xyz")); // same length
+    }
 
-        System.out.println("\n==== HtmlContentStrategy ====");
-        HtmlContentStrategy htmlStrategy = new HtmlContentStrategy();
-        System.out.println("Same HTML: " + htmlStrategy.isEqual("<p>Hi</p>", "<p>Hi</p>"));    // true
-        System.out.println("Different HTML: " + htmlStrategy.isEqual("<p>Hi</p>", "<div>Hi</div>")); // false
-        System.out.println("HTML vs text: " + htmlStrategy.isEqual("<p>Hi</p>", "Hi"));        // false
-        System.out.println("Null input: " + htmlStrategy.isEqual(null, "<p>Hi</p>"));          // false
+    @Test
+    void testContentSize_differentLength() {
+        ComparisonStrategy strategy = new ContentSizeStrategy();
+        assertFalse(strategy.isEqual("abc", "abcd")); // different length
+    }
 
-        System.out.println("\n==== TextContentStrategy ====");
-        TextContentStrategy textStrategy = new TextContentStrategy();
-        System.out.println("Same text, different HTML: " + textStrategy.isEqual("<p>Hello</p>", "<div>Hello</div>")); // true
-        System.out.println("Different text: " + textStrategy.isEqual("<p>Hello</p>", "<p>Bye</p>"));                  // false
-        System.out.println("Whitespace: " + textStrategy.isEqual("<p> </p>", "<div></div>"));                         // true
-        System.out.println("Null input: " + textStrategy.isEqual(null, "<p>Hi</p>"));                                 // false
+    @Test
+    void testHtmlContent_equalHtml() {
+        ComparisonStrategy strategy = new HtmlContentStrategy();
+        assertTrue(strategy.isEqual("<div>Hello</div>", "<div>Hello</div>"));
+    }
 
-        System.out.println("\n==== SimpleComparisonStrategy ====");
-        SimpleComparisonStrategy simpleStrategy = new SimpleComparisonStrategy();
-        System.out.println("Exact same content: " + simpleStrategy.isEqual("hello", "hello"));       // true
-        System.out.println("Different content: " + simpleStrategy.isEqual("hello", "world"));        // false
-        System.out.println("One null input: " + simpleStrategy.isEqual(null, "hello"));              // false
-        System.out.println("Both empty: " + simpleStrategy.isEqual("", ""));
+    @Test
+    void testHtmlContent_differentHtml() {
+        ComparisonStrategy strategy = new HtmlContentStrategy();
+        assertFalse(strategy.isEqual("<div>Hello</div>", "<p>Hello</p>"));
+    }
+
+    @Test
+    void testTextContent_sameTextDifferentTags() {
+        ComparisonStrategy strategy = new TextContentStrategy();
+        assertTrue(strategy.isEqual("<p>Hello</p>", "<div>Hello</div>"));
+    }
+
+    @Test
+    void testTextContent_differentVisibleText() {
+        ComparisonStrategy strategy = new TextContentStrategy();
+        assertFalse(strategy.isEqual("<p>Hello</p>", "<p>Bye</p>"));
+    }
+
+    @Test
+    void testSimpleComparison_exactMatch() {
+        ComparisonStrategy strategy = new SimpleComparisonStrategy();
+        assertTrue(strategy.isEqual("Tetris", "Tetris"));
+    }
+
+    @Test
+    void testSimpleComparison_mismatch() {
+        ComparisonStrategy strategy = new SimpleComparisonStrategy();
+        assertFalse(strategy.isEqual("Tetris", "Puzzle"));
+    }
+
+    @Test
+    void testNullInputs_allStrategiesReturnFalse() {
+        ComparisonStrategy html = new HtmlContentStrategy();
+        ComparisonStrategy text = new TextContentStrategy();
+        ComparisonStrategy size = new ContentSizeStrategy();
+        ComparisonStrategy simple = new SimpleComparisonStrategy();
+
+        assertFalse(html.isEqual(null, "abc"));
+        assertFalse(text.isEqual(null, "abc"));
+        assertFalse(size.isEqual(null, "abc"));
+        assertFalse(simple.isEqual(null, "abc"));
     }
 }
+
+

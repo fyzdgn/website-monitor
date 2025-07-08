@@ -25,11 +25,10 @@ public class HtmlContentStrategy implements ComparisonStrategy {
         return false;
 
     }
-
     @Override
     public boolean isEqual(String content1, String content2) {
         if (content1 == null || content2 == null) return false;
-        return content1.equals(content2); // HTML tag + attribute vs attribute dâhil tam eşitlik
+        return content1.equals(content2);
     }
 
     private String hash(String content) {

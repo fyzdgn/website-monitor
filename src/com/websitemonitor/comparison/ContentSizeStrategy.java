@@ -20,9 +20,7 @@ public class ContentSizeStrategy implements ComparisonStrategy {
         }
 
         return false;
-
     }
-
     @Override
     public boolean isEqual(String content1, String content2) {
         if (content1 == null || content2 == null) return false;

@@ -19,8 +19,6 @@ public class TextContentStrategy implements ComparisonStrategy {
             subscription.setLastContentHash(currentHash);
             return true;
         }
-
-
         return false;
     }
 
